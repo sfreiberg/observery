@@ -64,15 +64,9 @@ func (w *Webhook) Decode(r *http.Request) error {
 	return decoder.Decode(w, r.Form)
 }
 
-// WebhookCallbackHandler takes a function that will be called whenever the
+// WebhookHandler takes a function that will be called whenever the
 // handler is called by the observery.com webhook.
-//
-// Example:
-// callback := func(w *observery.Webhook, e error) {
-//	 // Do something
-// }
-// http.Handle("/observery", observery.WebhookCallbackHandler(callback))
-func WebhookCallbackHandler(f func(*Webhook, error)) func(w http.ResponseWriter, r *http.Request) {
+func WebhookHandler(f func(*Webhook, error)) func(w http.ResponseWriter, r *http.Request) {
 	var (
 		hook *Webhook
 		err  error
