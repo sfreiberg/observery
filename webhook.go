@@ -64,8 +64,10 @@ func (w *Webhook) Decode(r *http.Request) error {
 	return decoder.Decode(w, r.Form)
 }
 
-// WebhookHandler takes a function that will be called whenever the
-// handler is called by the observery.com webhook.
+// WebhookHandler takes a function that will be called whenever the handler
+// is called by the observery.com webhook. The func f will be called in a
+// goroutine so it doesn't tie up the observery caller in the event that f is a
+// long running task.
 func WebhookHandler(f func(*Webhook, error)) func(w http.ResponseWriter, r *http.Request) {
 	var (
 		hook *Webhook
@@ -74,6 +76,6 @@ func WebhookHandler(f func(*Webhook, error)) func(w http.ResponseWriter, r *http
 	callback := func(w http.ResponseWriter, r *http.Request) {
 		err = hook.Decode(r)
 	}
-	f(hook, err)
+	go f(hook, err)
 	return callback
 }
