@@ -53,13 +53,13 @@ type ContactGetResponse struct {
 
 // ContactCreateRequest holds the values for creating a new contact.
 type ContactCreateRequest struct {
-	Type    string `schema:"type"`    // 'email' or 'sms'
-	Name    string `schema:"name"`    // name for contact
-	Email   string `schema:"email"`   // email for contact
-	Number  string `schema:"number"`  // sms number for contact
-	Enabled bool   `schema:"enabled"` // is contact enabled
-	Format  string `schema:"format"`  // 'short' or 'long' - only when type = email
-	Checks  string `schema:"checks"`  // comma-separated list of check ids to map to contact
+	Type    string `form:"type"`    // 'email' or 'sms'
+	Name    string `form:"name"`    // name for contact
+	Email   string `form:"email"`   // email for contact
+	Number  string `form:"number"`  // sms number for contact
+	Enabled bool   `form:"enabled"` // is contact enabled
+	Format  string `form:"format"`  // 'short' or 'long' - only when type = email
+	Checks  string `form:"checks"`  // comma-separated list of check ids to map to contact
 }
 
 // ContactCreateResponse is the response from the API when calling Contact.Create.
@@ -78,11 +78,11 @@ type ContactCreateResponse struct {
 
 // ContactUpdateRequest holds the values for updating an existing contact.
 type ContactUpdateRequest struct {
-	ID      string  `schema:"-"`
-	Name    *string `schema:"name"`
-	Enabled *bool   `schema:"enabled"`
-	Format  *string `schema:"format"`
-	Checks  *string `schema:"checks"`
+	ID      string  `form:"-"`
+	Name    *string `form:"name"`
+	Enabled *bool   `form:"enabled"`
+	Format  *string `form:"format"`
+	Checks  *string `form:"checks"`
 }
 
 // ContactUpdateResponse holds the response from the API that is returned from Contact.Update.

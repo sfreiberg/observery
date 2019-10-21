@@ -61,47 +61,47 @@ type CheckGetResponse struct {
 // CheckCreateRequest holds the values for creating a new check.
 type CheckCreateRequest struct {
 	// http, ping, ssh, ftp, pop, smtp, imap or cert
-	Type string `schema:"type"`
+	Type string `form:"type"`
 
 	// name for check
-	Name string `schema:"name"`
+	Name string `form:"name"`
 
 	// is check active
-	Active bool `schema:"active"`
+	Active bool `form:"active"`
 
 	// interval (in minutes) this check is ran
-	Interval int `schema:"interval"`
+	Interval int `form:"interval"`
 
 	// comma-separated list of checks ids to map to this check
-	Contacts string `schema:"contacts"`
+	Contacts string `form:"contacts"`
 
 	// fields for http type
-	URL string `schema:"url"`
+	URL string `form:"url"`
 
 	// username for http or ftp, optional
-	Username string `schema:"username"`
+	Username string `form:"username"`
 
 	// password for http or ftp, optional
-	Password string `schema:"password"`
+	Password string `form:"password"`
 
 	// post data to send for http, optional
-	SendData string `schema:"sendData"`
+	SendData string `form:"sendData"`
 
 	// headers to send for http, optional
 	// TODO: what format?
-	HTTPHeaders string `schema:"httpHeaders"`
+	HTTPHeaders string `form:"httpHeaders"`
 
 	// host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types
-	Host string `schema:"host"`
+	Host string `form:"host"`
 
 	// port to check, optional for ssh, ftp, pop, smtp, imap and cert types
-	Port int `schema:"port"`
+	Port int `form:"port"`
 
 	// whether to use the secure version of the protocol for ftp, pop, smtp and imap, optional
-	Secure bool `schema:"secure"`
+	Secure bool `form:"secure"`
 
 	// number of days until cert expiration that should result in down status in cert type, required
-	CertExpirationDays int `schema:"certExpirationDays"`
+	CertExpirationDays int `form:"certExpirationDays"`
 }
 
 // CheckCreateResponse is the response from the API when calling Check.Create.
@@ -124,44 +124,44 @@ type CheckUpdateRequest struct {
 	ID string
 
 	// name for check
-	Name *string `schema:"name"`
+	Name *string `form:"name"`
 
 	// is check active
-	Active *bool `schema:"active"`
+	Active *bool `form:"active"`
 
 	// interval (in minutes) this check is ran
-	Interval *int `schema:"interval"`
+	Interval *int `form:"interval"`
 
 	// comma-separated list of checks ids to map to this check
-	Contacts *string `schema:"contacts"`
+	Contacts *string `form:"contacts"`
 
 	// fields for http type
-	URL *string `schema:"url"`
+	URL *string `form:"url"`
 
 	// username for http or ftp, optional
-	Username *string `schema:"username"`
+	Username *string `form:"username"`
 
 	// password for http or ftp, optional
-	Password *string `schema:"password"`
+	Password *string `form:"password"`
 
 	// post data to send for http, optional
-	SendData *string `schema:"sendData"`
+	SendData *string `form:"sendData"`
 
 	// headers to send for http, optional
 	// TODO: what format?
-	HTTPHeaders *string `schema:"httpHeaders"`
+	HTTPHeaders *string `form:"httpHeaders"`
 
 	// host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types
-	Host *string `schema:"host"`
+	Host *string `form:"host"`
 
 	// port to check, optional for ssh, ftp, pop, smtp, imap and cert types
-	Port *int `schema:"port"`
+	Port *int `form:"port"`
 
 	// whether to use the secure version of the protocol for ftp, pop, smtp and imap, optional
-	Secure *bool `schema:"secure"`
+	Secure *bool `form:"secure"`
 
 	// number of days until cert expiration that should result in down status in cert type, required
-	CertExpirationDays *int `schema:"certExpirationDays"`
+	CertExpirationDays *int `form:"certExpirationDays"`
 }
 
 // CheckUpdateResponse holds the response from the API that is returned from Check.Update.
