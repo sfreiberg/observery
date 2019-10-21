@@ -3,7 +3,6 @@ package observery
 import (
 	"fmt"
 	"net/http"
-	"reflect"
 	"time"
 )
 
@@ -65,15 +64,15 @@ func (w *Webhook) Decode(r *http.Request) error {
 	return decoder.Decode(w, r.Form)
 }
 
-// WebhookCallback takes a function that will be called whenever the handler is
-// called by the observery.com webhook.
+// WebhookCallbackHandler takes a function that will be called whenever the
+// handler is called by the observery.com webhook.
 //
 // Example:
 // callback := func(w *observery.Webhook, e error) {
 //	 // Do something
 // }
-// http.Handle("/observery", observery.WebhookCallback(callback))
-func WebhookCallback(f func(*Webhook, error)) func(w http.ResponseWriter, r *http.Request) {
+// http.Handle("/observery", observery.WebhookCallbackHandler(callback))
+func WebhookCallbackHandler(f func(*Webhook, error)) func(w http.ResponseWriter, r *http.Request) {
 	var (
 		hook *Webhook
 		err  error
@@ -83,15 +82,4 @@ func WebhookCallback(f func(*Webhook, error)) func(w http.ResponseWriter, r *htt
 	}
 	f(hook, err)
 	return callback
-}
-
-func durationConverter(s string) reflect.Value {
-	dur, err := time.ParseDuration(s)
-	if err == nil {
-		return reflect.ValueOf(dur)
-	}
-
-	fmt.Printf("Error parsing duration: %s\n", err)
-
-	return reflect.Value{}
 }
