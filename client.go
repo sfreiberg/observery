@@ -5,10 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"net/url"
 	"strings"
-
-	"github.com/gorilla/schema"
 )
 
 const (
@@ -57,10 +54,11 @@ func (c *Client) delete(ctx context.Context, url string, input, output interface
 func (c *Client) exec(ctx context.Context, u, method string, input, output interface{}) error {
 	var body io.Reader
 	if input != nil {
-		dst := url.Values{}
-		e := schema.NewEncoder()
-		e.Encode(input, dst)
-		body = strings.NewReader(dst.Encode())
+		values, err := encoder.Encode(input)
+		if err != nil {
+			return err
+		}
+		body = strings.NewReader(values.Encode())
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, u, body)
