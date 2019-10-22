@@ -1,7 +1,6 @@
 package observery
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -9,13 +8,13 @@ import (
 // Webhook is a struct for holding information from observery webhooks.
 // https://observery.com/account/_/integration/webhook
 type Webhook struct {
-	// ID is the unique identifier of the check.
-	ID int `form:"checkId"`
+	// CheckID is the unique identifier of the check.
+	CheckID string `form:"checkId"`
 
-	// Name is user supplied name of the check.
-	Name string `form:"checkName"`
+	// CheckName is user supplied name of the check.
+	CheckName string `form:"checkName"`
 
-	// Type is the check type and is one of the following:
+	// CheckType is the check type and is one of the following:
 	// * http
 	// * ping
 	// * ssh
@@ -24,13 +23,13 @@ type Webhook struct {
 	// * smtp
 	// * imap
 	// * cert
-	Type string `form:"checkType"`
+	CheckType string `form:"checkType"`
 
-	// Status indicates whether the check was up or dowm.
-	Status string `form:"status"`
+	// State indicates whether the check was up or dowm.
+	State string `form:"state"`
 
-	// Code holds the status code if the type is http.
-	Code int `form:"code"`
+	// HTTPStatusCode holds the status code if the type is http.
+	HTTPStatusCode int `form:"httpStatusCode"`
 
 	// ResponseTime holds the duration of the last response.
 	ResponseTime time.Duration `form:"responseTime"`
@@ -50,16 +49,6 @@ func (w *Webhook) Decode(r *http.Request) error {
 
 	// Add unit so it can be parsed into a time.Duration type.
 	r.Form.Set("responseTime", r.Form.Get("responseTime")+"ms")
-
-	// Change from yes or no to true or false so we can properly decode
-	// to a bool.
-	if r.Form.Get("timedOut") == "yes" {
-		r.Form.Set("timedOut", "true")
-	} else {
-		r.Form.Set("timedOut", "false")
-	}
-
-	fmt.Printf("%+v\n", r.Form)
 
 	return decoder.Decode(w, r.Form)
 }
