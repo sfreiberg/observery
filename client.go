@@ -18,7 +18,6 @@ type Client struct {
 	password string
 	client   *http.Client
 	Contact  *Contact
-	Outage   *Outage
 	Check    *Check
 }
 
@@ -30,7 +29,6 @@ func NewClient(username, password string) *Client {
 		client:   &http.Client{},
 	}
 	c.Contact = newContact(api+"/contact", c)
-	c.Outage = newOutage(api+"/outage", c)
 	c.Check = newCheck(api+"/check", c)
 	return c
 }

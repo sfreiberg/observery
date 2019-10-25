@@ -1,61 +1,154 @@
 package observery
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
-// Outage is the entry for managing observery outages via the API.
-type Outage struct {
-	url    string
-	client *Client
-}
-
-func newOutage(url string, c *Client) *Outage {
-	return &Outage{url: url, client: c}
-}
-
-// OutageRecentResponse is the response when calling Outage.Recent.
-type OutageRecentResponse struct {
-	Success bool   `json:"success"`
-	Reason  string `json:"reason"`
+// ListOutagesResponse ...
+type ListOutagesResponse struct {
+	Success bool
+	Reason  string
 	Outages []struct {
-		ID               string `json:"id"`
-		CheckID          string `json:"checkId"`
-		CheckName        string `json:"checkName"`
-		Ongoing          bool   `json:"ongoing"`
-		Start            string `json:"start"`
-		Duration         int64  `json:"duration"`
-		DurationFriendly string `json:"durationFriendly"`
-		Stop             string `json:"stop,omitempty"`
-	} `json:"result"`
+		ID        string
+		CheckID   string
+		CheckName string
+		Ongoing   bool
+		Start     time.Time
+		Stop      time.Time
+		Duration  time.Duration
+	}
 }
 
-// OutageGetResponse is the response when calling Check.Get.
-type OutageGetResponse struct {
-	Success bool   `json:"success"`
-	Reason  string `json:"reason"`
+// GetOutageResponse ...
+type GetOutageResponse struct {
+	Success bool
+	Reason  string
 	Outage  struct {
-		ID               string `json:"id"`
-		CheckID          string `json:"checkId"`
-		CheckName        string `json:"checkName"`
-		Ongoing          bool   `json:"ongoing"`
-		Start            string `json:"start"`
-		Stop             string `json:"stop,omitempty"`
-		Duration         int64  `json:"duration"`
-		DurationFriendly string `json:"durationFriendly"`
-		ResponseTime     int    `json:"responseTime"`
-		Details          string `json:"details"`
-	} `json:"result"`
+		ID           string
+		CheckID      string
+		CheckName    string
+		Ongoing      bool
+		Start        time.Time
+		Stop         time.Time
+		Duration     time.Duration
+		ResponseTime time.Duration
+		Details      string
+	}
 }
 
-// Recent returns the 100 most recent outages.
-func (o *Outage) Recent(ctx context.Context) (*OutageRecentResponse, error) {
-	resp := &OutageRecentResponse{}
-	err := o.client.get(ctx, o.url, nil, resp)
-	return resp, err
+// ListOutages returns the 100 most recent outages.
+func (c *Client) ListOutages(ctx context.Context) (*ListOutagesResponse, error) {
+	type Outage struct {
+		ID        string
+		CheckID   string
+		CheckName string
+		Ongoing   bool
+		Start     time.Time
+		Stop      time.Time
+		Duration  time.Duration
+	}
+
+	s := &struct {
+		Success bool   `json:"success"`
+		Reason  string `json:"reason"`
+		Outages []struct {
+			ID        string `json:"id"`
+			CheckID   string `json:"checkId"`
+			CheckName string `json:"checkName"`
+			Ongoing   bool   `json:"ongoing"`
+			Start     string `json:"start"`
+			Stop      string `json:"stop,omitempty"`
+			Duration  int    `json:"duration"`
+		} `json:"result"`
+	}{}
+	url := api + "/outage"
+	if err := c.get(ctx, url, nil, s); err != nil {
+		return nil, err
+	}
+
+	resp := &ListOutagesResponse{
+		Success: s.Success,
+		Reason:  s.Reason,
+	}
+
+	for _, o := range s.Outages {
+		outage := Outage{
+			ID:        o.ID,
+			CheckID:   o.CheckID,
+			CheckName: o.CheckName,
+			Ongoing:   o.Ongoing,
+			Duration:  time.Duration(o.Duration) * time.Millisecond,
+		}
+
+		start, err := time.Parse("2006-01-02T15:04:05", o.Start)
+		if err != nil {
+			return nil, err
+		}
+		outage.Start = start
+
+		if o.Stop != "" {
+			stop, err := time.Parse("2006-01-02T15:04:05", o.Stop)
+			if err != nil {
+				return nil, err
+			}
+			outage.Stop = stop
+		}
+
+		resp.Outages = append(resp.Outages, outage)
+	}
+
+	return resp, nil
 }
 
-// Get returns an invidual outage corresponding to the id.
-func (o *Outage) Get(ctx context.Context, id string) (*OutageGetResponse, error) {
-	resp := &OutageGetResponse{}
-	err := o.client.get(ctx, o.url+"/"+id, nil, resp)
-	return resp, err
+// GetOutage returns an invidual outage corresponding to the id.
+func (c *Client) GetOutage(ctx context.Context, id string) (*GetOutageResponse, error) {
+	s := &struct {
+		Success bool   `json:"success"`
+		Reason  string `json:"reason"`
+		Outage  struct {
+			ID           string `json:"id"`
+			CheckID      string `json:"checkId"`
+			CheckName    string `json:"checkName"`
+			Ongoing      bool   `json:"ongoing"`
+			Start        string `json:"start"`
+			Stop         string `json:"stop,omitempty"`
+			Duration     int    `json:"duration"`
+			ResponseTime int    `json:"responseTime"`
+			Details      string `json:"details"`
+		} `json:"result"`
+	}{}
+	url := api + "/outage/" + id
+	if err := c.get(ctx, url, nil, s); err != nil {
+		return nil, err
+	}
+
+	resp := &GetOutageResponse{
+		Success: s.Success,
+		Reason:  s.Reason,
+	}
+
+	resp.Outage.ID = s.Outage.ID
+	resp.Outage.CheckID = s.Outage.CheckID
+	resp.Outage.CheckName = s.Outage.CheckName
+	resp.Outage.Ongoing = s.Outage.Ongoing
+	resp.Outage.Duration = time.Duration(s.Outage.Duration) * time.Millisecond
+	resp.Outage.ResponseTime = time.Duration(s.Outage.Duration) * time.Millisecond
+	resp.Outage.Details = s.Outage.Details
+
+	start, err := time.Parse("2006-01-02T15:04:05", s.Outage.Start)
+	if err != nil {
+		return nil, err
+	}
+	resp.Outage.Start = start
+
+	if s.Outage.Stop != "" {
+		stop, err := time.Parse("2006-01-02T15:04:05", s.Outage.Stop)
+		if err != nil {
+			return nil, err
+		}
+		resp.Outage.Stop = stop
+	}
+
+	return resp, nil
 }
