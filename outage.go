@@ -41,6 +41,10 @@ type GetOutageResponse struct {
 
 // ListOutages returns the 100 most recent outages.
 func (c *Client) ListOutages(ctx context.Context) (*ListOutagesResponse, error) {
+	// This is used internally because the response contains an anonymous
+	// struct. I could have pulled this but getting all outages has different
+	// fields than getting a single outage. So more code here but better
+	// and more obvious user experience.
 	type Outage struct {
 		ID        string
 		CheckID   string
