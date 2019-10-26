@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// ListOutagesResponse ...
+// ListOutagesResponse contains the server response when requesting multiple
+// outages.
 type ListOutagesResponse struct {
 	Success bool
 	Reason  string
@@ -20,7 +21,8 @@ type ListOutagesResponse struct {
 	}
 }
 
-// GetOutageResponse ...
+// GetOutageResponse contains the server response when requesting an individual
+// outage.
 type GetOutageResponse struct {
 	Success bool
 	Reason  string
