@@ -1,6 +1,7 @@
 # Observery
 
 [![GoDoc](https://godoc.org/github.com/sfreiberg/observery?status.png)](https://godoc.org/github.com/sfreiberg/observery)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sfreiberg/observery)](https://goreportcard.com/report/github.com/sfreiberg/observery)
 
 ## About
 
