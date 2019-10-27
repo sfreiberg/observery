@@ -153,7 +153,7 @@ type CreateCheckRequest struct {
 	SendData *string `form:"sendData"`
 
 	// HTTPHeaders is an optional field for 'http' checks.
-	// TODO: what format?
+	// Headers need to be formatted as 'key: value'. One heaer per line.
 	HTTPHeaders *string `form:"httpHeaders"`
 
 	// Host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types.
@@ -231,7 +231,7 @@ type UpdateCheckRequest struct {
 	SendData *string `form:"sendData"`
 
 	// HTTPHeaders to send for http, optional.
-	// TODO: what format?
+	// Headers need to be formatted as 'key: value'. One heaer per line.
 	HTTPHeaders *string `form:"httpHeaders"`
 
 	// Host to check, required for ping, ssh, ftp, pop, smtp, imap and cert
