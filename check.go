@@ -197,7 +197,7 @@ type DeleteCheckResponse struct {
 
 // ListChecks returns all of the checks.
 func (c *Client) ListChecks(ctx context.Context) (*ListChecksResponse, error) {
-	url := api + "/contact"
+	url := api + "/check"
 	s := &struct {
 		Success bool   `json:"success"`
 		Reason  string `json:"reason"`
@@ -237,11 +237,13 @@ func (c *Client) ListChecks(ctx context.Context) (*ListChecksResponse, error) {
 			URL:    check.URL,
 			Host:   check.Host,
 		}
-		since, err := time.Parse("2006-01-02T15:04:05", check.Since)
-		if err != nil {
-			return nil, err
+		if check.Since != "" {
+			since, err := time.Parse("2006-01-02T15:04:05", check.Since)
+			if err != nil {
+				return nil, err
+			}
+			newCheck.Since = since
 		}
-		newCheck.Since = since
 		resp.Checks = append(resp.Checks, newCheck)
 	}
 
@@ -250,7 +252,7 @@ func (c *Client) ListChecks(ctx context.Context) (*ListChecksResponse, error) {
 
 // GetCheck returns an invidual check corresponding to the id.
 func (c *Client) GetCheck(ctx context.Context, id string) (*GetCheckResponse, error) {
-	url := api + "/check"
+	url := api + "/check/" + id
 	resp := &GetCheckResponse{}
 	err := c.get(ctx, url, nil, resp)
 	return resp, err
