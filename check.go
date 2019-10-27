@@ -260,6 +260,7 @@ type UpdateCheckResponse struct {
 	Result struct {
 		// ID of the check that was updated.
 		ID string `json:"id"`
+
 		// Message from the server about the success or failure of the update.
 		Message string `json:"message"`
 	} `json:"result"`
