@@ -122,7 +122,7 @@ type CreateContactRequest struct {
 	// Only applies to type email and must be either 'short' or 'long'.
 	Format string `form:"format"`
 
-	// Checks is a comma seperated list of check ids that should be
+	// Checks is a comma separated list of check ids that should be
 	// contacted when the check changes state.
 	Checks string `form:"checks"`
 }
@@ -170,7 +170,7 @@ type UpdateContactRequest struct {
 	// Only applies to type email and must be either 'short' or 'long'.
 	Format *string `form:"format"`
 
-	// Checks is a comma seperated list of check ids that should be
+	// Checks is a comma separated list of check ids that should be
 	// contacted when the check changes state.
 	Checks *string `form:"checks"`
 }

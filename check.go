@@ -98,7 +98,7 @@ type GetCheckResponse struct {
 
 		// MaintenanceSchedules configured for this check.
 		MaintenanceSchedules []struct {
-			// Days is a comma-seperated list of days.
+			// Days is a comma-separated list of days.
 			Days string `json:"days"`
 
 			// Start is when the maintenance schedule starts.
