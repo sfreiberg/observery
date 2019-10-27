@@ -17,9 +17,6 @@ type Client struct {
 	username string
 	password string
 	client   *http.Client
-	Contact  *Contact
-	Outage   *Outage
-	Check    *Check
 }
 
 // NewClient creates a new client with appropriate API keys.
@@ -29,9 +26,6 @@ func NewClient(username, password string) *Client {
 		password: password,
 		client:   &http.Client{},
 	}
-	c.Contact = newContact(api+"/contact", c)
-	c.Outage = newOutage(api+"/outage", c)
-	c.Check = newCheck(api+"/check", c)
 	return c
 }
 
@@ -58,7 +52,14 @@ func (c *Client) exec(ctx context.Context, u, method string, input, output inter
 		if err != nil {
 			return err
 		}
-		body = strings.NewReader(values.Encode())
+
+		if "post" == strings.ToLower(method) {
+			body = strings.NewReader(values.Encode())
+		}
+
+		if "put" == strings.ToLower(method) {
+			u = u + "?" + values.Encode()
+		}
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, u, body)
