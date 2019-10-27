@@ -170,14 +170,28 @@ type CreateCheckRequest struct {
 
 // CreateCheckResponse is the response from the API when calling Client.CreateCheck.
 type CreateCheckResponse struct {
-	Success bool   `json:"success"`
-	Reason  string `json:"reason"`
+	// Success returns true if the update was successful, false otherwise.
+	Success bool `json:"success"`
+
+	// Reason is a human readable message about the status of the request.
+	Reason string `json:"reason"`
+
+	// Reasons is a slice of Field/Error messages that explain why the create
+	// was unsuccessful.
 	Reasons []struct {
+		// Field is the name of the field that was incorrect.
 		Field string `json:"field"`
+
+		// Error is the actual error message that caused the failure.
 		Error string `json:"error"`
 	} `json:"reasons"`
+
+	// Result contains information about the request.
 	Result struct {
-		ID      string `json:"id"`
+		// ID of the newly created check.
+		ID string `json:"id"`
+
+		// Message from the server about the success or failure of the request.
 		Message string `json:"message"`
 	} `json:"result"`
 }
