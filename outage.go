@@ -8,34 +8,77 @@ import (
 // ListOutagesResponse contains the server response when requesting multiple
 // outages.
 type ListOutagesResponse struct {
+	// Success returns true if the request was successful and false otherwise.
 	Success bool
-	Reason  string
+
+	// Result is a message from the server about the requested action.
+	Reason string
+
+	// Outage is a slice of outages.
 	Outages []struct {
-		ID        string
-		CheckID   string
+		// ID of the outage.
+		ID string
+
+		// CheckID of the check that the outage belongs to.
+		CheckID string
+
+		// CheckName is the friendly name of the check that the outage belongs
+		// to.
 		CheckName string
-		Ongoing   bool
-		Start     time.Time
-		Stop      time.Time
-		Duration  time.Duration
+
+		// Ongoing returns true it the outage is ongoing.
+		Ongoing bool
+
+		// Start of when the outage began.
+		Start time.Time
+
+		// Stop is the date/time when the outage concluded.
+		Stop time.Time
+
+		// Duration of the outage.
+		Duration time.Duration
 	}
 }
 
 // GetOutageResponse contains the server response when requesting an individual
 // outage.
 type GetOutageResponse struct {
+	// Success returns true if the request was successful and false otherwise.
 	Success bool
-	Reason  string
-	Outage  struct {
-		ID           string
-		CheckID      string
-		CheckName    string
-		Ongoing      bool
-		Start        time.Time
-		Stop         time.Time
-		Duration     time.Duration
+
+	// Result is a message from the server about the requested action.
+	Reason string
+
+	// Outage contains the information about the requested outage.
+	Outage struct {
+		// ID of the outage.
+		ID string
+
+		// CheckID of the check that the outage belongs to.
+		CheckID string
+
+		// CheckName is the friendly name of the check that the outage belongs
+		// to.
+		CheckName string
+
+		// Ongoing returns true it the outage is ongoing.
+		Ongoing bool
+
+		// Start of when the outage began.
+		Start time.Time
+
+		// Stop is the date/time when the outage concluded.
+		Stop time.Time
+
+		// Duration of the outage.
+		Duration time.Duration
+
+		// ResponseTime is how long it took for end point to respond when it
+		// came back online.
 		ResponseTime time.Duration
-		Details      string
+
+		// Details is a human readable message about what caused the outage.
+		Details string
 	}
 }
 
