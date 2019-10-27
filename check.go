@@ -44,30 +44,79 @@ type ListChecksResponse struct {
 
 // GetCheckResponse is the response when calling Client.GetCheck.
 type GetCheckResponse struct {
-	Success bool   `json:"success"`
-	Reason  string `json:"Reason"`
-	Check   struct {
-		ID                     string `json:"id"`
-		Name                   string `json:"name"`
-		Type                   string `json:"type"`
-		State                  string `json:"state"`
-		Since                  string `json:"since"`
-		OutageID               string `json:"outageId"`
-		URL                    string `json:"url"`
-		Active                 bool   `json:"active"`
-		Interval               int    `json:"interval"`
-		EmailNotificationDelay int    `json:"emailNotificationDelay"`
-		SmsNotificationDelay   int    `json:"smsNotificationDelay"`
-		InMaintenance          bool   `json:"inMaintenance"`
-		MaintenanceModeActive  bool   `json:"maintenanceModeActive"`
-		MaintenanceSchedules   []struct {
-			Days     string    `json:"days"`
-			Start    time.Time `json:"start"`
-			Stop     time.Time `json:"stop"`
-			Timezone string    `json:"timezone"`
+	// Success will be false in the event of a failure.
+	Success bool `json:"success"`
+
+	// Reason will contain a message about why the request failed.
+	Reason string `json:"Reason"`
+
+	// Check hold the requested check.
+	Check struct {
+		// ID of the check.
+		ID string `json:"id"`
+
+		// Name of the check.
+		Name string `json:"name"`
+
+		// Type will be one of: http, ping, ssh, ftp, pop, smtp, imap or cert.
+		Type string `json:"type"`
+
+		// State is the current state of the check. Possible states are:
+		// up, down or waiting.
+		State string `json:"state"`
+
+		// Since holds the time of the last state change.
+		Since string `json:"since"`
+
+		// OutageID is the outage id if the check is currently down.
+		OutageID *string `json:"outageId"`
+
+		// URL to check if Check.Type is 'http'.
+		URL *string `json:"url"`
+
+		// Active is true when the check is being execute.
+		Active bool `json:"active"`
+
+		// Interval is how often the check in minutes.
+		Interval int `json:"interval"`
+
+		// EmailNotificationDelay is how long in minutes observery will wait to
+		// notify of an outage.
+		EmailNotificationDelay int `json:"emailNotificationDelay"`
+
+		// SmsNotificationDelay is how long in minutes observery will wait to
+		// notify of an outage.
+		SmsNotificationDelay int `json:"smsNotificationDelay"`
+
+		// InMaintenance returns true if the check is currently in
+		// a maintenance window.
+		InMaintenance bool `json:"inMaintenance"`
+
+		// MaintenanceModeActive return true if maintenance mode is currently
+		// active.
+		MaintenanceModeActive bool `json:"maintenanceModeActive"`
+
+		// MaintenanceSchedules configured for this check.
+		MaintenanceSchedules []struct {
+			// Days is a comma-seperated list of days.
+			Days string `json:"days"`
+
+			// Start is when the maintenance schedule starts.
+			Start time.Time `json:"start"`
+
+			// Stop is when the maintenance schedule ends.
+			Stop time.Time `json:"stop"`
+
+			// Timezone for this maintenance schedule in continent/city format.
+			Timezone string `json:"timezone"`
 		} `json:"maintenanceSchedules"`
+
+		// Contacts that are mapped to this is check.
 		Contacts []struct {
-			ID   string `json:"id"`
+			// ID of the contact.
+			ID string `json:"id"`
+
+			// Name of the contact.
 			Name string `json:"name"`
 		} `json:"contacts"`
 	} `json:"result"`
@@ -187,17 +236,25 @@ type UpdateCheckRequest struct {
 // UpdateCheckResponse holds the response from the API that is returned from
 // Client.UpdateCheck.
 type UpdateCheckResponse struct {
+	// Success returns true if the update was successful, false otherwise.
 	Success bool `json:"success"`
-	Result  struct {
-		ID      string `json:"id"`
+
+	// Result contains information about the update.
+	Result struct {
+		// ID of the check that was updated.
+		ID string `json:"id"`
+		// Message from the server about the success or failure of the update.
 		Message string `json:"message"`
 	} `json:"result"`
 }
 
 // DeleteCheckResponse holds the server response when calling Client.DeleteCheck.
 type DeleteCheckResponse struct {
-	Success bool   `json:"success"`
-	Result  string `json:"result"`
+	// Success returns true if the update was successful, false otherwise.
+	Success bool `json:"success"`
+
+	// Result is a message from the server about the requested action.
+	Result string `json:"result"`
 }
 
 // ListChecks returns all of the checks.
