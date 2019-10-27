@@ -91,32 +91,32 @@ type CreateCheckRequest struct {
 	Contacts string `form:"contacts"`
 
 	// fields for http type
-	URL string `form:"url"`
+	URL *string `form:"url"`
 
 	// username for http or ftp, optional
-	Username string `form:"username"`
+	Username *string `form:"username"`
 
 	// password for http or ftp, optional
-	Password string `form:"password"`
+	Password *string `form:"password"`
 
 	// post data to send for http, optional
-	SendData string `form:"sendData"`
+	SendData *string `form:"sendData"`
 
 	// headers to send for http, optional
 	// TODO: what format?
-	HTTPHeaders string `form:"httpHeaders"`
+	HTTPHeaders *string `form:"httpHeaders"`
 
 	// host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types
-	Host string `form:"host"`
+	Host *string `form:"host"`
 
 	// port to check, optional for ssh, ftp, pop, smtp, imap and cert types
-	Port int `form:"port"`
+	Port *int `form:"port"`
 
 	// whether to use the secure version of the protocol for ftp, pop, smtp and imap, optional
-	Secure bool `form:"secure"`
+	Secure *bool `form:"secure"`
 
 	// number of days until cert expiration that should result in down status in cert type, required
-	CertExpirationDays int `form:"certExpirationDays"`
+	CertExpirationDays *int `form:"certExpirationDays"`
 }
 
 // CreateCheckResponse is the response from the API when calling Client.CreateCheck.
@@ -250,7 +250,7 @@ func (c *Client) ListChecks(ctx context.Context) (*ListChecksResponse, error) {
 
 // GetCheck returns an invidual check corresponding to the id.
 func (c *Client) GetCheck(ctx context.Context, id string) (*GetCheckResponse, error) {
-	url := api + "/contact"
+	url := api + "/check"
 	resp := &GetCheckResponse{}
 	err := c.get(ctx, url, nil, resp)
 	return resp, err
@@ -258,7 +258,7 @@ func (c *Client) GetCheck(ctx context.Context, id string) (*GetCheckResponse, er
 
 // CreateCheck a new check.
 func (c *Client) CreateCheck(ctx context.Context, req *CreateCheckRequest) (*CreateCheckResponse, error) {
-	url := api + "/contact"
+	url := api + "/check"
 	resp := &CreateCheckResponse{}
 	err := c.post(ctx, url, req, resp)
 	return resp, err
@@ -266,7 +266,7 @@ func (c *Client) CreateCheck(ctx context.Context, req *CreateCheckRequest) (*Cre
 
 // UpdateCheck an existing check.
 func (c *Client) UpdateCheck(ctx context.Context, req *UpdateCheckRequest) (*UpdateCheckResponse, error) {
-	url := api + "/contact/" + req.ID
+	url := api + "/check/" + req.ID
 	resp := &UpdateCheckResponse{}
 	err := c.put(ctx, url, req, resp)
 	return resp, err
@@ -274,7 +274,7 @@ func (c *Client) UpdateCheck(ctx context.Context, req *UpdateCheckRequest) (*Upd
 
 // DeleteCheck deletes an existing check.
 func (c *Client) DeleteCheck(ctx context.Context, id string) (*DeleteCheckResponse, error) {
-	url := api + "/contact/" + id
+	url := api + "/check/" + id
 	resp := &DeleteCheckResponse{}
 	err := c.delete(ctx, url, nil, resp)
 	return resp, err

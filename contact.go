@@ -250,6 +250,6 @@ func (c *Client) UpdateContact(ctx context.Context, req *UpdateContactRequest) (
 func (c *Client) DeleteContact(ctx context.Context, id string) (*DeleteContactResponse, error) {
 	url := api + "/contact/" + id
 	resp := &DeleteContactResponse{}
-	err := c.put(ctx, url, nil, resp)
+	err := c.delete(ctx, url, nil, resp)
 	return resp, err
 }

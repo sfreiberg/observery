@@ -52,7 +52,14 @@ func (c *Client) exec(ctx context.Context, u, method string, input, output inter
 		if err != nil {
 			return err
 		}
-		body = strings.NewReader(values.Encode())
+
+		if "post" == strings.ToLower(method) {
+			body = strings.NewReader(values.Encode())
+		}
+
+		if "put" == strings.ToLower(method) {
+			u = u + "?" + values.Encode()
+		}
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, u, body)
