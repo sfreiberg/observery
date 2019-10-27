@@ -138,44 +138,49 @@ type UpdateCheckRequest struct {
 	// ID of the check to be updated
 	ID string
 
-	// name for check
+	// Name of the check.
 	Name *string `form:"name"`
 
-	// is check active
+	// is check active.
 	Active *bool `form:"active"`
 
-	// interval (in minutes) this check is ran
+	// Interval (in minutes) this check is ran.
 	Interval *int `form:"interval"`
 
-	// comma-separated list of checks ids to map to this check
+	// Contacts comma-separated list of checks ids to map to this check.
 	Contacts *string `form:"contacts"`
 
 	// fields for http type
+
+	// URL of website to check.
 	URL *string `form:"url"`
 
-	// username for http or ftp, optional
+	// Username for http or ftp, optional
 	Username *string `form:"username"`
 
-	// password for http or ftp, optional
+	// Password for http or ftp, optional
 	Password *string `form:"password"`
 
-	// post data to send for http, optional
+	// SendData is post data to send for http, optional
 	SendData *string `form:"sendData"`
 
-	// headers to send for http, optional
+	// HTTPHeaders to send for http, optional.
 	// TODO: what format?
 	HTTPHeaders *string `form:"httpHeaders"`
 
-	// host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types
+	// Host to check, required for ping, ssh, ftp, pop, smtp, imap and cert
+	// types.
 	Host *string `form:"host"`
 
-	// port to check, optional for ssh, ftp, pop, smtp, imap and cert types
+	// Port to check, optional for ssh, ftp, pop, smtp, imap and cert types
 	Port *int `form:"port"`
 
-	// whether to use the secure version of the protocol for ftp, pop, smtp and imap, optional
+	// whether to use the secure version of the protocol for ftp, pop, smtp
+	// and imap, optional.
 	Secure *bool `form:"secure"`
 
-	// number of days until cert expiration that should result in down status in cert type, required
+	// CertExpirationDays is the number of days until cert expiration that
+	// should result in down status in cert type, required.
 	CertExpirationDays *int `form:"certExpirationDays"`
 }
 
