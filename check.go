@@ -124,47 +124,50 @@ type GetCheckResponse struct {
 
 // CreateCheckRequest holds the values for creating a new check.
 type CreateCheckRequest struct {
-	// http, ping, ssh, ftp, pop, smtp, imap or cert
+	// Type is the type of check to create. Will be one of:
+	// http, ping, ssh, ftp, pop, smtp, imap or cert.
 	Type string `form:"type"`
 
-	// name for check
+	// Name of the check.
 	Name string `form:"name"`
 
-	// is check active
+	// Active is true if the check is active.
 	Active bool `form:"active"`
 
-	// interval (in minutes) this check is ran
+	// Interval (in minutes) this check should run.
 	Interval int `form:"interval"`
 
-	// comma-separated list of checks ids to map to this check
+	// Contacts is a comma-separated list of checks ids to map to this check.
 	Contacts string `form:"contacts"`
 
-	// fields for http type
+	// URL holds the URL to check for Type 'http'. Mandatory for 'http' checks.
 	URL *string `form:"url"`
 
-	// username for http or ftp, optional
+	// Username for http or ftp, optional.
 	Username *string `form:"username"`
 
-	// password for http or ftp, optional
+	// Password for http or ftp, optional
 	Password *string `form:"password"`
 
-	// post data to send for http, optional
+	// SendData is the data to send for an 'http' check, optional.
 	SendData *string `form:"sendData"`
 
-	// headers to send for http, optional
+	// HTTPHeaders is an optional field for 'http' checks.
 	// TODO: what format?
 	HTTPHeaders *string `form:"httpHeaders"`
 
-	// host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types
+	// Host to check, required for ping, ssh, ftp, pop, smtp, imap and cert types.
 	Host *string `form:"host"`
 
-	// port to check, optional for ssh, ftp, pop, smtp, imap and cert types
+	// Port to check, optional for ssh, ftp, pop, smtp, imap and cert types.
 	Port *int `form:"port"`
 
-	// whether to use the secure version of the protocol for ftp, pop, smtp and imap, optional
+	// Secure tells the check to use the secure version of the protocol for:
+	// ftp, pop, smtp and imap, optional.
 	Secure *bool `form:"secure"`
 
-	// number of days until cert expiration that should result in down status in cert type, required
+	// CertExpirationDays is the number of days until cert expiration that
+	// should result in down status in cert type, required.
 	CertExpirationDays *int `form:"certExpirationDays"`
 }
 
