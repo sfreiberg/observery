@@ -17,8 +17,6 @@ type Client struct {
 	username string
 	password string
 	client   *http.Client
-	Contact  *Contact
-	Check    *Check
 }
 
 // NewClient creates a new client with appropriate API keys.
@@ -28,8 +26,6 @@ func NewClient(username, password string) *Client {
 		password: password,
 		client:   &http.Client{},
 	}
-	c.Contact = newContact(api+"/contact", c)
-	c.Check = newCheck(api+"/check", c)
 	return c
 }
 

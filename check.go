@@ -1,36 +1,52 @@
 package observery
 
-import "context"
+import (
+	"context"
+	"time"
+)
 
-// Check is the entry for managing observery checks via the API.
-type Check struct {
-	url    string
-	client *Client
+// ListChecksResponse is the response when calling Client.ListChecks.
+type ListChecksResponse struct {
+	// Success will be false in the event of a failure.
+	Success bool
+
+	// Reason will contain a message about why the request failed.
+	Reason string
+
+	// Checks is a list of all checks.
+	Checks []struct {
+		// ID of the check.
+		ID string
+
+		// Name of the check.
+		Name string
+
+		// Active
+		Active bool
+
+		// Type will be one of: http, ping, ssh, ftp, pop, smtp, imap or cert.
+		Type string
+
+		// State is the current state of the check. Possible states are:
+		// up, down or waiting.
+		State string
+
+		// Since holds the time of the last state change.
+		Since time.Time
+
+		// URL is the url to check for type http.
+		URL string
+
+		// Host holds the host for ping, ssh, ftp, pop, smtp, imap and cert.
+		Host string
+	}
 }
 
-func newCheck(url string, c *Client) *Check {
-	return &Check{url: url, client: c}
-}
-
-// CheckAllResponse is the response when calling Check.All.
-type CheckAllResponse struct {
-	Success bool `json:"success"`
-	Checks  []struct {
-		ID     string `json:"id"`
-		Name   string `json:"name"`
-		Active bool   `json:"active"`
-		Type   string `json:"type"`
-		State  string `json:"state"`
-		Since  string `json:"since,omitempty"`
-		URL    string `json:"url,omitempty"`
-		Host   string `json:"host,omitempty"`
-	} `json:"result"`
-}
-
-// CheckGetResponse is the response when calling Check.Get.
-type CheckGetResponse struct {
-	Success bool `json:"success"`
-	Result  struct {
+// GetCheckResponse is the response when calling Client.GetCheck.
+type GetCheckResponse struct {
+	Success bool   `json:"success"`
+	Reason  string `json:"Reason"`
+	Check   struct {
 		ID                     string `json:"id"`
 		Name                   string `json:"name"`
 		Type                   string `json:"type"`
@@ -45,21 +61,20 @@ type CheckGetResponse struct {
 		InMaintenance          bool   `json:"inMaintenance"`
 		MaintenanceModeActive  bool   `json:"maintenanceModeActive"`
 		MaintenanceSchedules   []struct {
-			Days     string `json:"days"`
-			Start    string `json:"start"`
-			Stop     string `json:"stop"`
-			Timezone string `json:"timezone"`
+			Days     string    `json:"days"`
+			Start    time.Time `json:"start"`
+			Stop     time.Time `json:"stop"`
+			Timezone string    `json:"timezone"`
 		} `json:"maintenanceSchedules"`
-		ContactIds []string `json:"contactIds"`
-		Contacts   []struct {
+		Contacts []struct {
 			ID   string `json:"id"`
 			Name string `json:"name"`
 		} `json:"contacts"`
 	} `json:"result"`
 }
 
-// CheckCreateRequest holds the values for creating a new check.
-type CheckCreateRequest struct {
+// CreateCheckRequest holds the values for creating a new check.
+type CreateCheckRequest struct {
 	// http, ping, ssh, ftp, pop, smtp, imap or cert
 	Type string `form:"type"`
 
@@ -104,8 +119,8 @@ type CheckCreateRequest struct {
 	CertExpirationDays int `form:"certExpirationDays"`
 }
 
-// CheckCreateResponse is the response from the API when calling Check.Create.
-type CheckCreateResponse struct {
+// CreateCheckResponse is the response from the API when calling Client.CreateCheck.
+type CreateCheckResponse struct {
 	Success bool   `json:"success"`
 	Reason  string `json:"reason"`
 	Reasons []struct {
@@ -118,8 +133,8 @@ type CheckCreateResponse struct {
 	} `json:"result"`
 }
 
-// CheckUpdateRequest holds the values for updating an existing check.
-type CheckUpdateRequest struct {
+// UpdateCheckRequest holds the values for updating an existing check.
+type UpdateCheckRequest struct {
 	// ID of the check to be updated
 	ID string
 
@@ -164,8 +179,9 @@ type CheckUpdateRequest struct {
 	CertExpirationDays *int `form:"certExpirationDays"`
 }
 
-// CheckUpdateResponse holds the response from the API that is returned from Check.Update.
-type CheckUpdateResponse struct {
+// UpdateCheckResponse holds the response from the API that is returned from
+// Client.UpdateCheck.
+type UpdateCheckResponse struct {
 	Success bool `json:"success"`
 	Result  struct {
 		ID      string `json:"id"`
@@ -173,43 +189,93 @@ type CheckUpdateResponse struct {
 	} `json:"result"`
 }
 
-// CheckDeleteResponse holds the server response when calling Check.Delete.
-type CheckDeleteResponse struct {
+// DeleteCheckResponse holds the server response when calling Client.DeleteCheck.
+type DeleteCheckResponse struct {
 	Success bool   `json:"success"`
 	Result  string `json:"result"`
 }
 
-// All returns all of the checks.
-func (c *Check) All(ctx context.Context) (*CheckAllResponse, error) {
-	resp := &CheckAllResponse{}
-	err := c.client.get(ctx, c.url, nil, resp)
+// ListChecks returns all of the checks.
+func (c *Client) ListChecks(ctx context.Context) (*ListChecksResponse, error) {
+	url := api + "/contact"
+	s := &struct {
+		Success bool   `json:"success"`
+		Reason  string `json:"reason"`
+		Checks  []struct {
+			ID     string `json:"id"`
+			Name   string `json:"name"`
+			Active bool   `json:"active"`
+			Type   string `json:"type"`
+			State  string `json:"state"`
+			Since  string `json:"since,omitempty"`
+			URL    string `json:"url,omitempty"`
+			Host   string `json:"host,omitempty"`
+		} `json:"result"`
+	}{}
+
+	type Check struct {
+		ID     string
+		Name   string
+		Active bool
+		Type   string
+		State  string
+		Since  time.Time
+		URL    string
+		Host   string
+	}
+
+	err := c.get(ctx, url, nil, s)
+
+	resp := &ListChecksResponse{Success: s.Success, Reason: s.Reason}
+	for _, check := range s.Checks {
+		newCheck := Check{
+			ID:     check.ID,
+			Name:   check.Name,
+			Active: check.Active,
+			Type:   check.Type,
+			State:  check.State,
+			URL:    check.URL,
+			Host:   check.Host,
+		}
+		since, err := time.Parse("2006-01-02T15:04:05", check.Since)
+		if err != nil {
+			return nil, err
+		}
+		newCheck.Since = since
+		resp.Checks = append(resp.Checks, newCheck)
+	}
+
 	return resp, err
 }
 
-// Get returns an invidual check corresponding to the id.
-func (c *Check) Get(ctx context.Context, id string) (*CheckGetResponse, error) {
-	resp := &CheckGetResponse{}
-	err := c.client.get(ctx, c.url+"/"+id, nil, resp)
+// GetCheck returns an invidual check corresponding to the id.
+func (c *Client) GetCheck(ctx context.Context, id string) (*GetCheckResponse, error) {
+	url := api + "/contact"
+	resp := &GetCheckResponse{}
+	err := c.get(ctx, url, nil, resp)
 	return resp, err
 }
 
-// Create a new check.
-func (c *Check) Create(ctx context.Context, req *CheckCreateRequest) (*CheckCreateResponse, error) {
-	resp := &CheckCreateResponse{}
-	err := c.client.post(ctx, c.url, req, resp)
+// CreateCheck a new check.
+func (c *Client) CreateCheck(ctx context.Context, req *CreateCheckRequest) (*CreateCheckResponse, error) {
+	url := api + "/contact"
+	resp := &CreateCheckResponse{}
+	err := c.post(ctx, url, req, resp)
 	return resp, err
 }
 
-// Update an existing check.
-func (c *Check) Update(ctx context.Context, req *CheckUpdateRequest) (*CheckUpdateResponse, error) {
-	resp := &CheckUpdateResponse{}
-	err := c.client.put(ctx, c.url+req.ID, req, resp)
+// UpdateCheck an existing check.
+func (c *Client) UpdateCheck(ctx context.Context, req *UpdateCheckRequest) (*UpdateCheckResponse, error) {
+	url := api + "/contact/" + req.ID
+	resp := &UpdateCheckResponse{}
+	err := c.put(ctx, url, req, resp)
 	return resp, err
 }
 
-// Delete an existing check.
-func (c *Check) Delete(ctx context.Context, id string) (*CheckDeleteResponse, error) {
-	resp := &CheckDeleteResponse{}
-	err := c.client.delete(ctx, c.url+"/"+id, nil, resp)
+// DeleteCheck deletes an existing check.
+func (c *Client) DeleteCheck(ctx context.Context, id string) (*DeleteCheckResponse, error) {
+	url := api + "/contact/" + id
+	resp := &DeleteCheckResponse{}
+	err := c.delete(ctx, url, nil, resp)
 	return resp, err
 }
