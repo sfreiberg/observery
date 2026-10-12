@@ -13,7 +13,7 @@ func newClient(t *testing.T) *Client {
 	)
 
 	if username == "" || password == "" {
-		t.Fatalf("You must set the OBSERVERY_USERNAME and OBSERVERY_PASSWORD environment variables")
+		t.Skip("OBSERVERY_USERNAME and OBSERVERY_PASSWORD must be set to run integration tests")
 	}
 
 	return NewClient(username, password)
