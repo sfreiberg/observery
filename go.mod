@@ -1,8 +1,5 @@
 module github.com/sfreiberg/observery
 
-go 1.13
+go 1.26
 
-require (
-	github.com/go-playground/form v3.1.4+incompatible
-	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-)
+require github.com/go-playground/form/v4 v4.5.0

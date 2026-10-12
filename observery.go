@@ -5,7 +5,7 @@ package observery
 import (
 	"time"
 
-	"github.com/go-playground/form"
+	"github.com/go-playground/form/v4"
 )
 
 var (
