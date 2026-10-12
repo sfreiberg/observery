@@ -4,5 +4,5 @@ go 1.13
 
 require (
 	github.com/go-playground/form v3.1.4+incompatible
-	github.com/gorilla/schema v1.1.0
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 )
