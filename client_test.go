@@ -44,7 +44,7 @@ func TestCheck(t *testing.T) {
 		Name:     "Test Check",
 		Active:   true,
 		Interval: 1,
-		URL:      PtrString("http://example.com"),
+		URL:      new("http://example.com"),
 	}
 	createCheckResp, err := client.CreateCheck(ctx, createCheckReq)
 	if err != nil {
@@ -81,10 +81,10 @@ func TestCheck(t *testing.T) {
 
 	updateCheckReq := &UpdateCheckRequest{
 		ID:       createCheckResp.Result.ID,
-		Name:     PtrString("Check #2"),
-		Active:   PtrBool(false),
-		Interval: PtrInt(2),
-		URL:      PtrString("http://www.example.com"),
+		Name:     new("Check #2"),
+		Active:   new(false),
+		Interval: new(2),
+		URL:      new("http://www.example.com"),
 	}
 	updateCheckResp, err := client.UpdateCheck(ctx, updateCheckReq)
 	if err != nil {
@@ -164,9 +164,9 @@ func TestContact(t *testing.T) {
 
 	contactUpdate := &UpdateContactRequest{
 		ID:      ccr.Result.ID,
-		Name:    PtrString("Test #2"),
-		Enabled: PtrBool(false),
-		Format:  PtrString("short"),
+		Name:    new("Test #2"),
+		Enabled: new(false),
+		Format:  new("short"),
 	}
 	ucr, err := client.UpdateContact(ctx, contactUpdate)
 	if err != nil {
