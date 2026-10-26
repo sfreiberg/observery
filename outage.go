@@ -182,7 +182,7 @@ func (c *Client) GetOutage(ctx context.Context, id string) (*GetOutageResponse, 
 	resp.Outage.CheckName = s.Outage.CheckName
 	resp.Outage.Ongoing = s.Outage.Ongoing
 	resp.Outage.Duration = time.Duration(s.Outage.Duration) * time.Millisecond
-	resp.Outage.ResponseTime = time.Duration(s.Outage.Duration) * time.Millisecond
+	resp.Outage.ResponseTime = time.Duration(s.Outage.ResponseTime) * time.Millisecond
 	resp.Outage.Details = s.Outage.Details
 
 	start, err := time.Parse("2006-01-02T15:04:05", s.Outage.Start)

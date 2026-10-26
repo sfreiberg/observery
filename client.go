@@ -29,23 +29,23 @@ func NewClient(username, password string) *Client {
 	return c
 }
 
-func (c *Client) get(ctx context.Context, url string, input, output interface{}) error {
+func (c *Client) get(ctx context.Context, url string, input, output any) error {
 	return c.exec(ctx, url, "GET", input, output)
 }
 
-func (c *Client) post(ctx context.Context, u string, input, output interface{}) error {
+func (c *Client) post(ctx context.Context, u string, input, output any) error {
 	return c.exec(ctx, u, "POST", input, output)
 }
 
-func (c *Client) put(ctx context.Context, url string, input, output interface{}) error {
+func (c *Client) put(ctx context.Context, url string, input, output any) error {
 	return c.exec(ctx, url, "PUT", input, output)
 }
 
-func (c *Client) delete(ctx context.Context, url string, input, output interface{}) error {
+func (c *Client) delete(ctx context.Context, url string, input, output any) error {
 	return c.exec(ctx, url, "DELETE", input, output)
 }
 
-func (c *Client) exec(ctx context.Context, u, method string, input, output interface{}) error {
+func (c *Client) exec(ctx context.Context, u, method string, input, output any) error {
 	var body io.Reader
 	if input != nil {
 		values, err := encoder.Encode(input)
