@@ -47,8 +47,11 @@ func (w *Webhook) Decode(r *http.Request) error {
 		return err
 	}
 
-	// Add unit so it can be parsed into a time.Duration type.
-	r.Form.Set("responseTime", r.Form.Get("responseTime")+"ms")
+	// Add unit so it can be parsed into a time.Duration type. Leave a
+	// missing or empty value alone; "ms" on its own fails to parse.
+	if rt := r.Form.Get("responseTime"); rt != "" {
+		r.Form.Set("responseTime", rt+"ms")
+	}
 
 	return decoder.Decode(w, r.Form)
 }
@@ -58,13 +61,9 @@ func (w *Webhook) Decode(r *http.Request) error {
 // goroutine so it doesn't tie up the observery caller in the event that f is a
 // long running task.
 func WebhookHandler(f func(*Webhook, error)) func(w http.ResponseWriter, r *http.Request) {
-	var (
-		hook *Webhook
-		err  error
-	)
-	callback := func(w http.ResponseWriter, r *http.Request) {
-		err = hook.Decode(r)
+	return func(w http.ResponseWriter, r *http.Request) {
+		hook := &Webhook{}
+		err := hook.Decode(r)
+		go f(hook, err)
 	}
-	go f(hook, err)
-	return callback
 }
